@@ -1,0 +1,398 @@
+:root {
+    --bg-color-dark: #020108;
+    --bg-color-light: #160a2b;
+    --accent-glow: #a855f7;
+    --accent-glow-secondary: #ec4899;
+    --center-core: #fde047;
+    --text-primary: #ffffff;
+    --text-secondary: #e2e8f0;
+}
+
+body, html {
+    margin: 0;
+    padding: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: var(--bg-color-dark);
+    background: radial-gradient(circle at 50% 50%, var(--bg-color-light) 0%, var(--bg-color-dark) 100%);
+    overflow: hidden;
+    font-family: 'Montserrat', sans-serif;
+    color: var(--text-primary);
+}
+
+#starfield {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 0;
+    pointer-events: none;
+}
+
+#universe-container {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    perspective: 1200px;
+    z-index: 1;
+}
+
+#galaxy-scene {
+    position: absolute;
+    width: 0;
+    height: 0;
+    transform-style: preserve-3d;
+    animation: rotateGalaxy 30s infinite linear; /* Tăng tốc độ quay của toàn bộ dải thiên hà */
+}
+
+.paused {
+    animation-play-state: paused !important;
+}
+
+@keyframes rotateGalaxy {
+    /* Chuyển rotateY xuống cuối để đĩa xoay mượt trên trục nghiêng của chính nó (không bị lắc lư) */
+    0% { transform: rotateX(20deg) rotateZ(5deg) rotateY(0deg); }
+    100% { transform: rotateX(20deg) rotateZ(5deg) rotateY(360deg); }
+}
+
+/* Các vòng tròn quỹ đạo phát sáng */
+.orbital-ring {
+    position: absolute;
+    border: 1px dashed rgba(168, 85, 247, 0.3);
+    border-radius: 50%;
+    transform-style: preserve-3d;
+    box-shadow: 0 0 20px rgba(168, 85, 247, 0.1) inset;
+    pointer-events: none;
+}
+
+/* Bụi không gian lấp lửng */
+.stardust {
+    position: absolute;
+    background: #fff;
+    border-radius: 50%; /* Tròn */
+    box-shadow: 0 0 10px rgba(168, 85, 247, 0.8); /* Phục hồi shadow */
+    transform-style: preserve-3d;
+    pointer-events: none;
+}
+
+/* Các ngôi sao/thiên thạch cỡ lớn tĩnh được quay góc ngẫu nhiên bằng JS */
+.belt-star {
+    position: absolute;
+    background: #fff;
+    border-radius: 50%; /* Chuyển lại hình tròn */
+    transform-style: preserve-3d;
+    pointer-events: none;
+    will-change: transform;
+}
+
+.belt-star.color-1 { background: #fde047; box-shadow: 0 0 20px #fde047; }
+.belt-star.color-2 { background: #ec4899; box-shadow: 0 0 20px #ec4899; }
+.belt-star.color-3 { background: #60a5fa; box-shadow: 0 0 20px #60a5fa; }
+
+.image-card {
+    position: absolute;
+    width: 32px; /* Tiếp tục thu nhỏ ảnh */
+    height: 48px; 
+    left: -16px;
+    top: -24px;
+    transform-style: preserve-3d;
+    cursor: pointer;
+    border-radius: 8px;
+    box-shadow: 0 0 15px rgba(168, 85, 247, 0.4), inset 0 0 10px rgba(255,255,255,0.1);
+    transition: box-shadow 0.4s ease, transform 0.4s ease, filter 0.4s ease;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.05);
+    overflow: hidden;
+    user-select: none;
+    -webkit-user-drag: none;
+    will-change: transform;
+}
+
+.image-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.85; /* Có thể làm sắc nét hơn 0.9 */
+    transition: opacity 0.4s ease, transform 0.4s ease;
+    pointer-events: none;
+}
+
+#center-sun {
+    position: absolute;
+    width: 80px;
+    height: 80px;
+    z-index: 10;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: opacity 0.5s ease;
+}
+
+.sun-core {
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    background-color: var(--center-core);
+    border-radius: 50%;
+    box-shadow: 0 0 30px var(--center-core), 0 0 80px #fff;
+    animation: corePulse 3s infinite alternate;
+}
+
+.sun-glow {
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    background: radial-gradient(circle, rgba(253, 224, 71, 0.4) 0%, rgba(168, 85, 247, 0.2) 40%, transparent 70%);
+    border-radius: 50%;
+    animation: glowPulse 5s infinite alternate;
+}
+
+.sun-rings {
+    position: absolute;
+    width: 140px;
+    height: 140px;
+    border: 1px solid rgba(253, 224, 71, 0.3);
+    border-radius: 50%;
+    box-shadow: 0 0 20px rgba(168, 85, 247, 0.4) inset;
+    transform: rotateX(70deg);
+    animation: spinRings 10s infinite linear;
+}
+
+@keyframes corePulse {
+    0% { transform: scale(0.9); opacity: 0.8; box-shadow: 0 0 20px var(--center-core); }
+    100% { transform: scale(1.1); opacity: 1; box-shadow: 0 0 50px var(--center-core), 0 0 100px #fff; }
+}
+
+@keyframes glowPulse {
+    0% { transform: scale(1); opacity: 0.5; }
+    100% { transform: scale(1.5); opacity: 1; }
+}
+
+@keyframes spinRings {
+    0% { transform: rotateX(75deg) rotateZ(0deg) scale(1); }
+    50% { transform: rotateX(75deg) rotateZ(180deg) scale(1.1); box-shadow: 0 0 40px rgba(168, 85, 247, 0.5) inset; }
+    100% { transform: rotateX(75deg) rotateZ(360deg) scale(1); }
+}
+
+/* OVERLAY CSS */
+#overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 1s cubic-bezier(0.4, 0, 0.2, 1), visibility 1s;
+}
+
+#overlay.active {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: all;
+}
+
+.overlay-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    transition: background 1.5s ease;
+}
+
+#overlay.universe-1 .overlay-background {
+    background: radial-gradient(circle at 70% 30%, rgba(91, 33, 182, 0.8), rgba(0, 0, 0, 0.95));
+}
+#overlay.universe-2 .overlay-background {
+    background: linear-gradient(135deg, rgba(15, 23, 42, 0.85), rgba(30, 58, 138, 0.75));
+}
+#overlay.universe-3 .overlay-background {
+    background: radial-gradient(ellipse at bottom left, rgba(153, 27, 27, 0.8), rgba(10, 10, 10, 0.95));
+}
+
+.overlay-content {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 60px;
+    max-width: 1100px;
+    width: 90%;
+    z-index: 1001;
+}
+
+/* Hiển thị lần lượt: Ẩn đi khi chưa active */
+.overlay-content .image-wrapper,
+.overlay-content .overlay-text-container > * {
+    opacity: 0;
+    transform: translateY(30px) scale(0.95);
+    transition: all 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+/* Khi active: Lần lượt xuất hiện */
+#overlay.active .overlay-content .image-wrapper {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    transition-delay: 0.3s; /* Hiện nhanh hơn vì đã phải chờ warp speed */
+}
+
+#overlay.active .overlay-content .universe-badge {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    transition-delay: 0.5s; 
+}
+
+#overlay.active .overlay-content h1 {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    transition-delay: 0.7s; 
+}
+
+#overlay.active .overlay-content p {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    transition-delay: 0.9s; 
+}
+
+#overlay.active .overlay-content #close-btn {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    transition-delay: 1.1s; 
+}
+
+.universe-badge {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.9rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.6);
+    background: rgba(255,255,255,0.1);
+    padding: 5px 15px;
+    border-radius: 20px;
+    display: inline-block;
+    margin-bottom: 15px;
+    border: 1px solid rgba(255,255,255,0.2);
+}
+
+.overlay-content.template-1 { flex-direction: row; }
+.overlay-content.template-2 { flex-direction: column; text-align: center; gap: 30px; }
+.overlay-content.template-2 img { height: 350px; object-fit: cover; border-radius: 50% 50% 10px 10px; border: 4px solid var(--accent-glow-secondary); }
+.overlay-content.template-2 .overlay-text-container { align-items: center; }
+.overlay-content.template-2 #close-btn { align-self: center; }
+
+.overlay-content.template-3 { flex-direction: row-reverse; }
+.overlay-content.template-3 .overlay-text-container { text-align: right; align-items: flex-end; }
+.overlay-content.template-3 .image-wrapper { transform: rotate(5deg) scale(0.95); }
+#overlay.active .overlay-content.template-3 .image-wrapper { transform: rotate(5deg) scale(1); }
+.overlay-content.template-3 #close-btn { align-self: flex-end; }
+
+.image-wrapper {
+    position: relative;
+    flex-shrink: 0;
+    border-radius: 16px;
+    padding: 10px;
+    background: linear-gradient(145deg, rgba(255,255,255,0.1), rgba(255,255,255,0.02));
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+    border: 1px solid rgba(255,255,255,0.2);
+}
+
+.overlay-content img {
+    width: 380px;
+    height: 570px;
+    object-fit: cover;
+    border-radius: 12px;
+    box-shadow: 0 0 40px rgba(168, 85, 247, 0.6);
+}
+
+.glow-effect {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 16px;
+    box-shadow: 0 0 60px rgba(236, 72, 153, 0.3);
+    pointer-events: none;
+}
+
+.overlay-text-container { flex: 1; display: flex; flex-direction: column; justify-content: center; }
+
+.overlay-text-container h1 {
+    font-family: 'Cinzel', serif;
+    font-size: 3.5rem;
+    background: linear-gradient(to right, #f87171, #c084fc, #60a5fa);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+    margin-top: 0;
+    margin-bottom: 20px;
+    filter: drop-shadow(0 0 10px rgba(192, 132, 252, 0.4));
+    line-height: 1.2;
+}
+
+.overlay-text-container p {
+    font-size: 1.4rem;
+    line-height: 1.7;
+    margin-bottom: 40px;
+    color: var(--text-secondary);
+    font-weight: 300;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+    min-height: 60px; /* Giữ khoảng trống khi chữ đang chạy */
+}
+
+/* Typing cursor effect */
+.typing-cursor::after {
+    content: '|';
+    animation: blink 1s step-end infinite;
+    color: var(--accent-glow);
+}
+@keyframes blink { 50% { opacity: 0; } }
+
+#close-btn {
+    align-self: flex-start;
+    background: linear-gradient(135deg, rgba(168,85,247,0.8), rgba(236,72,153,0.8));
+    border: none;
+    color: white;
+    padding: 12px 30px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border-radius: 30px;
+    cursor: pointer;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.3), 0 0 15px rgba(168,85,247,0.5);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+#close-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    transition: left 0.5s ease;
+}
+
+#close-btn:hover { transform: translateY(-2px); box-shadow: 0 15px 25px rgba(0,0,0,0.4), 0 0 25px rgba(236,72,153,0.7); }
+#close-btn:hover::before { left: 100%; }
+
+@media (max-width: 900px) {
+    .overlay-content { flex-direction: column !important; text-align: center; gap: 30px; }
+    .overlay-content img { width: 260px; height: 390px; }
+    .overlay-text-container h1 { font-size: 2.2rem; }
+    .overlay-text-container p { font-size: 1.1rem; }
+    #close-btn { align-self: center !important; }
+}

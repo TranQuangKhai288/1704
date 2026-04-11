@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>I Love You in Every Universe</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Montserrat:ital,wght@0,300;0,400;0,600;1,300&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Background Starfield Canvas -->
+    <canvas id="starfield"></canvas>
+    
+    <!-- Main 3D Universe Container -->
+    <div id="universe-container">
+        
+        <!-- Center Light / Black Hole / Sun -->
+        <div id="center-sun">
+            <div class="sun-core"></div>
+            <div class="sun-glow"></div>
+            <div class="sun-rings"></div>
+        </div>
+
+        <!-- Rotating Galaxy Scene -->
+        <div id="galaxy-scene">
+            <!-- Cards will be injected by JavaScript -->
+        </div>
+    </div>
+
+    <!-- Zoom/Message Overlay -->
+    <div id="overlay" class="hidden">
+        <div class="overlay-background"></div>
+        <div class="overlay-content">
+            <div class="image-wrapper">
+                <img id="overlay-image" src="" alt="Universe Memory">
+                <div class="glow-effect"></div>
+            </div>
+            <div class="overlay-text-container">
+                <h1 id="overlay-title">Happy Birthday!</h1>
+                <p id="overlay-message">To my one and only, across every timeline, every dimension, and every reality... my heart always finds its way to you.</p>
+                <button id="close-btn">
+                    <span>Return to Galaxy</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
