@@ -13,7 +13,7 @@ html {
     margin: 0;
     padding: 0;
     width: 100vw;
-    height: 100vh;
+    height: 100dvh; /* Sửa lỗi Safari iOS */
     background-color: var(--bg-color-dark);
     background: radial-gradient(circle at 50% 50%, var(--bg-color-light) 0%, var(--bg-color-dark) 100%);
     overflow: hidden;
@@ -26,7 +26,7 @@ html {
     top: 0;
     left: 0;
     width: 100vw;
-    height: 100vh;
+    height: 100dvh;
     z-index: 0;
     pointer-events: none;
 }
@@ -34,7 +34,7 @@ html {
 #universe-container {
     position: relative;
     width: 100vw;
-    height: 100vh;
+    height: 100dvh;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -266,7 +266,7 @@ html {
     top: 0;
     left: 0;
     width: 100vw;
-    height: 100vh;
+    height: 100dvh;
     z-index: 1000;
     display: flex;
     justify-content: center;
@@ -275,6 +275,9 @@ html {
     visibility: hidden;
     pointer-events: none;
     transition: opacity 1s cubic-bezier(0.4, 0, 0.2, 1), visibility 1s;
+    /* SafeArea cho iPhone (Notch) */
+    padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+    box-sizing: border-box;
 }
 
 #overlay.active {
@@ -529,23 +532,39 @@ html {
     .overlay-content {
         flex-direction: column !important;
         text-align: center;
-        gap: 30px;
+        gap: 20px;
+        width: 90%;
+        max-height: 90%;
+        overflow-y: auto;
     }
 
     .overlay-content img {
-        width: 260px;
-        height: 390px;
+        width: auto;
+        max-width: 100%;
+        height: auto;
+        max-height: 35dvh; /* Giới hạn chiều cao ảnh để thấy được text */
+        border-radius: 12px;
     }
 
     .overlay-text-container h1 {
-        font-size: 2.2rem;
+        font-size: 1.8rem;
     }
 
     .overlay-text-container p {
-        font-size: 1.1rem;
+        font-size: 1rem;
+        margin-bottom: 20px;
     }
 
     #close-btn {
         align-self: center !important;
+        padding: 10px 25px;
+        font-size: 1rem;
+    }
+}
+
+/* Tối ưu hóa cho màn hình điện thoại dọc (Portrait) */
+@media (max-width: 600px) {
+    #galaxy-scene {
+        transform: scale(0.65); /* Thu nhỏ hệ thống ngân hà để vừa màn hình dọc */
     }
 }
