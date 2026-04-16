@@ -404,22 +404,51 @@ let startX = 0,
   lastX = 0;
 // -----------------------
 
-const shuffleMessages = (data) => {
-  if (!data || data.length === 0) return data;
-  // Tách phần tử cuối (lời chúc sinh nhật) ra
-  const birthdayMessage = data.pop();
+const processData = (rawData) => {
+  // Hỗ trợ cả 2 định dạng: mảng cũ và object bóc tách mới
+  if (Array.isArray(rawData)) {
+    if (rawData.length === 0) return rawData;
+    const birthdayMessage = rawData.pop();
+    for (let i = rawData.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [rawData[i], rawData[j]] = [rawData[j], rawData[i]];
+    }
+    return [...rawData, birthdayMessage];
+  } else if (rawData.images && rawData.messages) {
+    let combinedData = [];
+    const images = rawData.images;
+    let availableMessages = [...rawData.messages];
+    
+    // Xáo trộn mảng tin nhắn
+    for (let i = availableMessages.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [availableMessages[i], availableMessages[j]] = [availableMessages[j], availableMessages[i]];
+    }
 
-  // Thuật toán Fisher-Yates shuffle cho phần còn lại
-  for (let i = data.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [data[i], data[j]] = [data[j], data[i]];
+    // Ghép ảnh với các tin nhắn ngẫu nhiên (xoay vòng nếu tin nhắn ít hơn ảnh)
+    for (let i = 0; i < images.length; i++) {
+        if (i === images.length - 1 && rawData.birthdayMessage) {
+            // Ảnh cuối cùng luôn là chốt hạ hiển thị Lời chúc sinh nhật
+            combinedData.push({
+                image: images[i],
+                message: rawData.birthdayMessage
+            });
+        } else {
+            combinedData.push({
+                image: images[i],
+                message: availableMessages[i % availableMessages.length]
+            });
+        }
+    }
+    return combinedData;
   }
-
-  // Gắn lại phần tử cuối vào mảng
-  return [...data, birthdayMessage];
+  return [];
 };
 
 document.addEventListener("DOMContentLoaded", async () => {
+  // Start audio system
+  initAudio();
+
   // Start intro first
   initIntroSystem();
 
@@ -433,8 +462,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   try {
     const response = await fetch("data.json");
     if (!response.ok) throw new Error("Network response was not ok");
-    let data = await response.json();
-    data = shuffleMessages(data);
+    let rawData = await response.json();
+    const data = processData(rawData);
     initGalaxy(data);
   } catch (e) {
     console.warn(
@@ -444,13 +473,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     const fallbackImages = [
       "images/anh1.png",
       "images/anh2.jpg",
-      "images/anh3.jpg",
-      "images/anh4.jpg",
-      "images/anh5.jpg",
+      "images/anh3.jpeg",
+      "images/anh4.jpeg",
+      "images/anh5.jpeg",
       "images/anh6.jpg",
-      "images/anh7.jpg",
+      "images/anh7.jpge",
       "images/anh8.jpg",
-      // "images/anh9.jpg",
+      "images/anh9.jpeg",
       // "images/anh10.jpg",
       // "images/anh11.jpg",
       // "images/anh12.jpg",
@@ -1039,4 +1068,104 @@ function setupPhysics() {
   }
 
   renderPhysics();
+}
+
+// ============================================
+// AUDIO SYSTEM
+// ============================================
+function initAudio() {
+  const bgMusic = document.getElementById("bg-music");
+  const musicControl = document.getElementById("music-control");
+  let hasPlayed = false;
+
+  if (!bgMusic || !musicControl) return;
+
+  bgMusic.volume = 0.2; // Set default volume to 30%
+
+  const tryPlayMusic = () => {
+    if (!hasPlayed) {
+      bgMusic
+        .play()
+        .then(() => {
+          hasPlayed = true;
+          musicControl.classList.add("playing");
+          musicControl.classList.remove("muted");
+
+          // Remove interaction fallback listeners once successfully played
+          document.removeEventListener("click", tryPlayMusic);
+          document.removeEventListener("touchstart", tryPlayMusic);
+          document.removeEventListener("keydown", tryPlayMusic);
+        })
+        .catch((e) => {
+          console.log(
+            "Autoplay prevented by browser, waiting for user interaction:",
+            e,
+          );
+        });
+    }
+  };
+
+  // 1. Cố gắng phát nhạc ngay lập tức khi vừa vào Web
+  tryPlayMusic();
+
+  // 2. Chờ tương tác đầu tiên của người dùng nếu trình duyệt (Chrome/Safari) chặn autoplay
+  document.addEventListener("click", tryPlayMusic);
+  document.addEventListener("touchstart", tryPlayMusic, { passive: true });
+  document.addEventListener("keydown", tryPlayMusic);
+
+  // 3. Hiển thị Panel chỉnh âm lượng khi bấm vào icon
+  const volumePanel = document.getElementById("volume-panel");
+  const volumeSlider = document.getElementById("volume-slider");
+
+  musicControl.addEventListener("click", (e) => {
+    e.stopPropagation(); // Ngăn sự kiện click làm chuyển scene
+
+    // Bật/tắt hiển thị panel âm lượng
+    if (volumePanel) {
+      volumePanel.classList.toggle("active");
+    }
+
+    // Nếu nhạc đang bị pause nhưng người dùng chạm vào nút nhạc, tự động phát lại
+    if (bgMusic.paused && bgMusic.volume > 0) {
+      bgMusic.play();
+      musicControl.classList.add("playing");
+      musicControl.classList.remove("muted");
+      hasPlayed = true;
+    }
+  });
+
+  // 4. Kéo thanh trượt để chỉnh âm thanh
+  if (volumeSlider) {
+    volumeSlider.addEventListener("input", (e) => {
+      e.stopPropagation();
+      const newVolume = parseFloat(e.target.value);
+      bgMusic.volume = newVolume;
+
+      // Cập nhật giao diện của biểu tượng dựa theo âm lượng
+      if (newVolume === 0) {
+        musicControl.classList.remove("playing");
+        musicControl.classList.add("muted");
+      } else {
+        musicControl.classList.remove("muted");
+        if (!bgMusic.paused) {
+          musicControl.classList.add("playing");
+        }
+      }
+    });
+
+    // Chạm/kéo thanh trượt cũng không làm chuyển scene
+    volumeSlider.addEventListener("click", (e) => e.stopPropagation());
+    volumeSlider.addEventListener("touchstart", (e) => e.stopPropagation());
+  }
+
+  // 5. Đóng panel âm lượng khi bấm ra ngoài
+  document.addEventListener("click", (e) => {
+    if (
+      volumePanel &&
+      !musicControl.contains(e.target) &&
+      !volumePanel.contains(e.target)
+    ) {
+      volumePanel.classList.remove("active");
+    }
+  });
 }
