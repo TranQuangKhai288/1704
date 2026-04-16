@@ -6,7 +6,7 @@ const introStoryTexts = [
   "Trước kia, mọi thứ cứ trôi qua bình lặng, lặp đi lặp lại một cách đơn điệu. Không có gì đặc biệt, không có gì đáng nhớ.",
   "Rồi ngày em đến, mọi thứ anh làm đều có ý nghĩa hơn, đều có suy nghĩ về em ở trong đó. Anh cảm thấy mình thật may mắn khi có em ở bên.",
   "Nhưng mà vì con người của anh trước kia, anh đã không thể ở bên em được lâu hơn như là mình mong muốn.",
-  "Nhưng mà giờ anh đã thay đổi rồi, anh sẽ hông làm gì khiến em phải bất an hay lo lắng nữa. Cho dù không làm em cười, anh cũng sẽ ở bên em quài cho tới khi em chán thôi.",
+  "Nhưng mà bây giờ, anh sẽ hông làm gì khiến em phải bất an hay lo lắng nữa. Cho dù không làm em cười, anh cũng sẽ ở bên em quài cho tới khi em chán thôi.",
   "Chúc em iu tuổi mới xinh hơn nữa, giỏi hơn nữa, iu anh nhìu hơn nữa, ở bên anh nhiều hơn nữa. A iu em ở mọi vũ trụ 😘",
 ];
 
@@ -45,12 +45,17 @@ function initTapToStart() {
 
     // Remove listeners
     document.removeEventListener("click", startExperience, true);
-    document.removeEventListener("touchstart", startExperience, { capture: true });
+    document.removeEventListener("touchstart", startExperience, {
+      capture: true,
+    });
   };
 
   // Listen for any click/touch to start
   document.addEventListener("click", startExperience, true);
-  document.addEventListener("touchstart", startExperience, { capture: true, passive: true });
+  document.addEventListener("touchstart", startExperience, {
+    capture: true,
+    passive: true,
+  });
 }
 
 function initIntroSystem() {
