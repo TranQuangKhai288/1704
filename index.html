@@ -1,50 +1,199 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    />
     <title>I Love You in Every Universe</title>
-    <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Montserrat:ital,wght@0,300;0,400;0,600;1,300&display=swap" rel="stylesheet">
-</head>
-<body>
+    <link rel="stylesheet" href="style.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Montserrat:ital,wght@0,300;0,400;0,600;1,300&family=Dancing+Script:wght@400;700&family=Great+Vibes&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <!-- ============ BIRTHDAY INTRO ============ -->
+    <div id="intro-overlay">
+      <canvas id="intro-particles"></canvas>
+
+      <!-- Scene 1: Opening -->
+      <div class="intro-scene scene-1 active">
+        <div class="scene-content">
+          <div class="sparkle-container"></div>
+          <div class="intro-date">17 · 04</div>
+          <h1 class="intro-title">Happy Birthday</h1>
+          <div class="intro-heart-divider">
+            <span class="heart-line"></span>
+            <span class="heart-icon">♥</span>
+            <span class="heart-line"></span>
+          </div>
+          <p class="intro-subtitle">
+            Gửi đến người con gái đặc biệt nhất vũ trụ
+          </p>
+        </div>
+      </div>
+
+      <!-- Scene 2: "Gửi đến người con gái..." -->
+      <div class="intro-scene scene-2">
+        <div class="scene-content">
+          <div class="quote-mark">❝</div>
+          <p class="intro-story" id="story-text-1"></p>
+          <div class="quote-mark bottom">❞</div>
+        </div>
+      </div>
+
+      <!-- Scene 3: "Trước kia..." -->
+      <div class="intro-scene scene-3">
+        <div class="scene-content">
+          <div class="floating-stars-text">
+            <span class="star-deco">✦</span>
+            <span class="star-deco">⋆</span>
+            <span class="star-deco">✧</span>
+          </div>
+          <p class="intro-story" id="story-text-2"></p>
+        </div>
+      </div>
+
+      <!-- Scene 4: "Rồi ngày em đến..." -->
+      <div class="intro-scene scene-4">
+        <div class="scene-content">
+          <div class="quote-mark">❝</div>
+          <p class="intro-story" id="story-text-3"></p>
+          <div class="quote-mark bottom">❞</div>
+        </div>
+      </div>
+
+      <!-- Scene 5: "Nhưng mà vì con người..." -->
+      <div class="intro-scene scene-5">
+        <div class="scene-content">
+          <div class="floating-stars-text">
+            <span class="star-deco">⋆</span>
+            <span class="star-deco">✧</span>
+            <span class="star-deco">⋆</span>
+          </div>
+          <p class="intro-story" id="story-text-4"></p>
+        </div>
+      </div>
+
+      <!-- Scene 6: "Nhưng mà giờ anh đã thay đổi..." -->
+      <div class="intro-scene scene-6">
+        <div class="scene-content">
+          <div class="quote-mark">❝</div>
+          <p class="intro-story" id="story-text-5"></p>
+          <div class="quote-mark bottom">❞</div>
+        </div>
+      </div>
+
+      <!-- Scene 7: "Iu poé" + Enter button -->
+      <div class="intro-scene scene-7">
+        <div class="scene-content">
+          <div class="orbit-rings-intro">
+            <div class="orbit-ring-intro r1"></div>
+            <div class="orbit-ring-intro r2"></div>
+            <div class="orbit-ring-intro r3"></div>
+            <div class="intro-core-light"></div>
+          </div>
+          <p class="intro-story" id="story-text-6"></p>
+          <button id="enter-universe-btn">
+            <span class="btn-text">Cho em xem cái này hay lắm nè</span>
+            <span class="btn-glow"></span>
+            <span class="btn-particles"></span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Progress dots -->
+      <div class="intro-progress">
+        <span class="progress-dot active" data-scene="0"></span>
+        <span class="progress-dot" data-scene="1"></span>
+        <span class="progress-dot" data-scene="2"></span>
+        <span class="progress-dot" data-scene="3"></span>
+        <span class="progress-dot" data-scene="4"></span>
+        <span class="progress-dot" data-scene="5"></span>
+        <span class="progress-dot" data-scene="6"></span>
+      </div>
+    </div>
+
+    <!-- ============ TUTORIAL OVERLAY ============ -->
+    <div id="tutorial-overlay" class="hidden">
+      <div class="tutorial-card">
+        <h2 class="tutorial-title">Chỉ em xài nè</h2>
+        <div class="tutorial-steps">
+          <div class="tutorial-step">
+            <div class="step-icon">
+              <div class="icon-drag"></div>
+            </div>
+            <p>
+              <strong>Xoay</strong><br />Nhấn & kéo hoặc Vuốt để xoay dải Ngân
+              Hà
+            </p>
+          </div>
+          <div class="tutorial-step">
+            <div class="step-icon">
+              <div class="icon-zoom"></div>
+            </div>
+            <p>
+              <strong>Phóng to</strong><br />Dùng con lăn chuột hoặc Chụm 2 ngón
+              tay
+            </p>
+          </div>
+          <div class="tutorial-step">
+            <div class="step-icon">
+              <div class="icon-click"></div>
+            </div>
+            <p>
+              <strong>Xem kỷ niệm</strong><br />Nhấn vào các tấm ảnh để xem lời
+              nhắn
+            </p>
+          </div>
+        </div>
+        <button id="tutorial-close-btn">
+          <span>Bắt đầu khám phá</span>
+        </button>
+      </div>
+    </div>
+
     <!-- Background Starfield Canvas -->
     <canvas id="starfield"></canvas>
-    
+
     <!-- Main 3D Universe Container -->
     <div id="universe-container">
-        
-        <!-- Center Light / Black Hole / Sun -->
-        <div id="center-sun">
-            <div class="sun-core"></div>
-            <div class="sun-glow"></div>
-            <div class="sun-rings"></div>
-        </div>
+      <!-- Center Light / Black Hole / Sun -->
+      <div id="center-sun">
+        <div class="sun-core"></div>
+        <div class="sun-glow"></div>
+        <div class="sun-rings"></div>
+      </div>
 
-        <!-- Rotating Galaxy Scene -->
-        <div id="galaxy-scene">
-            <!-- Cards will be injected by JavaScript -->
-        </div>
+      <!-- Rotating Galaxy Scene -->
+      <div id="galaxy-scene">
+        <!-- Cards will be injected by JavaScript -->
+      </div>
     </div>
 
     <!-- Zoom/Message Overlay -->
     <div id="overlay" class="hidden">
-        <div class="overlay-background"></div>
-        <div class="overlay-content">
-            <div class="image-wrapper">
-                <img id="overlay-image" src="" alt="Universe Memory">
-                <div class="glow-effect"></div>
-            </div>
-            <div class="overlay-text-container">
-                <h1 id="overlay-title">Happy Birthday!</h1>
-                <p id="overlay-message">To my one and only, across every timeline, every dimension, and every reality... my heart always finds its way to you.</p>
-                <button id="close-btn">
-                    <span>Return to Galaxy</span>
-                </button>
-            </div>
+      <div class="overlay-background"></div>
+      <div class="overlay-content">
+        <div class="image-wrapper">
+          <img id="overlay-image" src="" alt="Universe Memory" />
+          <div class="glow-effect"></div>
         </div>
+        <div class="overlay-text-container">
+          <h1 id="overlay-title">Happy Birthday!</h1>
+          <p id="overlay-message">
+            To my one and only, across every timeline, every dimension, and
+            every reality... my heart always finds its way to you.
+          </p>
+          <button id="close-btn">
+            <span>Return to Galaxy</span>
+          </button>
+        </div>
+      </div>
     </div>
 
     <script src="script.js"></script>
-</body>
+  </body>
 </html>
