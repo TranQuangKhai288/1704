@@ -26,7 +26,7 @@ function initIntroSystem() {
   setupIntroEvents();
 
   // Auto-advance scene 1 after 4 seconds
-  introAutoTimer = setTimeout(() => advanceIntroScene(), 4500);
+  // introAutoTimer = setTimeout(() => advanceIntroScene(), 4500);
 }
 
 function initIntroParticles() {
@@ -288,11 +288,8 @@ function showTutorial() {
 function closeTutorial() {
   const tutorialOverlay = document.getElementById("tutorial-overlay");
   if (tutorialOverlay) {
-    tutorialOverlay.style.opacity = "0";
-    setTimeout(() => {
-      tutorialOverlay.classList.add("hidden");
-      tutorialOverlay.style.opacity = "1"; // Reset for future if needed
-    }, 800);
+    // Chỉ cần ném class .hidden vào, CSS sẽ tự lo hiệu ứng mờ dần 0.8s cực mượt
+    tutorialOverlay.classList.add("hidden");
   }
 }
 
