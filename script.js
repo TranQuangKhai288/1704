@@ -18,6 +18,41 @@ let introParticlesCanvas = null;
 let introParticles = [];
 let introAnimationId = null;
 
+function initTapToStart() {
+  const tapOverlay = document.getElementById("tap-to-start-overlay");
+  if (!tapOverlay) return;
+
+  let hasStarted = false;
+
+  const startExperience = () => {
+    if (hasStarted) return;
+    hasStarted = true;
+
+    // Play audio unmute
+    const bgMusic = document.getElementById("bg-music");
+    if (bgMusic && bgMusic.muted) {
+      bgMusic.muted = false;
+      bgMusic.play().catch(() => {});
+    }
+
+    // Hide tap overlay
+    tapOverlay.classList.add("exiting");
+    setTimeout(() => {
+      tapOverlay.classList.add("hidden");
+      // NOW start the intro after modal is dismissed
+      initIntroSystem();
+    }, 600);
+
+    // Remove listeners
+    document.removeEventListener("click", startExperience, true);
+    document.removeEventListener("touchstart", startExperience, { capture: true });
+  };
+
+  // Listen for any click/touch to start
+  document.addEventListener("click", startExperience, true);
+  document.addEventListener("touchstart", startExperience, { capture: true, passive: true });
+}
+
 function initIntroSystem() {
   document.body.classList.add("intro-active");
 
@@ -418,27 +453,30 @@ const processData = (rawData) => {
     let combinedData = [];
     const images = rawData.images;
     let availableMessages = [...rawData.messages];
-    
+
     // Xáo trộn mảng tin nhắn
     for (let i = availableMessages.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
-      [availableMessages[i], availableMessages[j]] = [availableMessages[j], availableMessages[i]];
+      [availableMessages[i], availableMessages[j]] = [
+        availableMessages[j],
+        availableMessages[i],
+      ];
     }
 
     // Ghép ảnh với các tin nhắn ngẫu nhiên (xoay vòng nếu tin nhắn ít hơn ảnh)
     for (let i = 0; i < images.length; i++) {
-        if (i === images.length - 1 && rawData.birthdayMessage) {
-            // Ảnh cuối cùng luôn là chốt hạ hiển thị Lời chúc sinh nhật
-            combinedData.push({
-                image: images[i],
-                message: rawData.birthdayMessage
-            });
-        } else {
-            combinedData.push({
-                image: images[i],
-                message: availableMessages[i % availableMessages.length]
-            });
-        }
+      if (i === images.length - 1 && rawData.birthdayMessage) {
+        // Ảnh cuối cùng luôn là chốt hạ hiển thị Lời chúc sinh nhật
+        combinedData.push({
+          image: images[i],
+          message: rawData.birthdayMessage,
+        });
+      } else {
+        combinedData.push({
+          image: images[i],
+          message: availableMessages[i % availableMessages.length],
+        });
+      }
     }
     return combinedData;
   }
@@ -449,9 +487,10 @@ document.addEventListener("DOMContentLoaded", async () => {
   // Start audio system
   initAudio();
 
-  // Start intro first
-  initIntroSystem();
+  // Show tap-to-start overlay first (intro will start after user taps)
+  initTapToStart();
 
+  // Init galaxy background systems (but intro will start after tap)
   initStarfield();
   initStardust();
   initBeltStars();
@@ -1076,42 +1115,40 @@ function setupPhysics() {
 function initAudio() {
   const bgMusic = document.getElementById("bg-music");
   const musicControl = document.getElementById("music-control");
-  let hasPlayed = false;
+  let hasUnmuted = false;
 
   if (!bgMusic || !musicControl) return;
 
   bgMusic.volume = 0.2; // Set default volume to 30%
 
-  const tryPlayMusic = () => {
-    if (!hasPlayed) {
+  const tryUnmuteAndPlay = () => {
+    if (!hasUnmuted) {
+      bgMusic.muted = false;
       bgMusic
         .play()
         .then(() => {
-          hasPlayed = true;
+          hasUnmuted = true;
           musicControl.classList.add("playing");
           musicControl.classList.remove("muted");
 
-          // Remove interaction fallback listeners once successfully played
-          document.removeEventListener("click", tryPlayMusic);
-          document.removeEventListener("touchstart", tryPlayMusic);
-          document.removeEventListener("keydown", tryPlayMusic);
+          // Remove interaction listeners once successfully played
+          document.removeEventListener("click", tryUnmuteAndPlay, true);
+          document.removeEventListener("touchstart", tryUnmuteAndPlay, true);
+          document.removeEventListener("keydown", tryUnmuteAndPlay);
         })
         .catch((e) => {
-          console.log(
-            "Autoplay prevented by browser, waiting for user interaction:",
-            e,
-          );
+          console.log("Failed to play audio:", e);
         });
     }
   };
 
-  // 1. Cố gắng phát nhạc ngay lập tức khi vừa vào Web
-  tryPlayMusic();
-
-  // 2. Chờ tương tác đầu tiên của người dùng nếu trình duyệt (Chrome/Safari) chặn autoplay
-  document.addEventListener("click", tryPlayMusic);
-  document.addEventListener("touchstart", tryPlayMusic, { passive: true });
-  document.addEventListener("keydown", tryPlayMusic);
+  // Chạy autoplay khi click/touch bất kỳ đâu trên màn hình (dùng capture phase để catch tất cả)
+  document.addEventListener("click", tryUnmuteAndPlay, true);
+  document.addEventListener("touchstart", tryUnmuteAndPlay, {
+    capture: true,
+    passive: true,
+  });
+  document.addEventListener("keydown", tryUnmuteAndPlay);
 
   // 3. Hiển thị Panel chỉnh âm lượng khi bấm vào icon
   const volumePanel = document.getElementById("volume-panel");
